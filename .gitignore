@@ -1,0 +1,6 @@
+### LaTeX user-specific files
+
+*.pdf
+*.aux
+*.log
+*.synctex.gz
