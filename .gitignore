@@ -1,3 +1,11 @@
+### Derived output files
+
+output/*
+
+### Eclipse metadata
+
+.metadata/*
+
 ### LaTeX user-specific files
 
 *.pdf

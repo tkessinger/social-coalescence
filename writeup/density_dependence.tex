@@ -1,0 +1,246 @@
+\documentclass[10pt]{revtex4}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+
+\begin{document}
+
+Our goal, broadly speaking, is to duplicate the ``branching process" approximation of Desai and Fisher (2007) incorporating density dependence, which is a simple way to model the evolution of cooperation.
+Cooperation becomes a better strategy as more individuals cooperate.
+
+When the number of mutant individuals $n$ is small enough compared to the population size $N$, it does not yet affect the mean fitness.
+$n$ can be described by the master equation:
+\begin{equation}
+P(n,t+dt) = \delta(n+1)P(n+1,t)dt + \beta(n-1)P(n-1,t)dt + (1-(\delta + \beta)dt n)P(n,t),
+\end{equation}
+where $\delta$ is the death rate and $\beta$ the birth rate.
+Essentially, the first term is the probability that at the previous time step there were $n+1$ individuals, one of whom died, the second is the probability that there were $n-1$ individuals, one of whom gave birth, and the last term is the probability that nothing happened.
+Without loss of (much) generality, let $\delta = 1$ and $\beta = 1+s$, so that the time scale is essentially set by the death rate.
+Then we can rewrite the above as a differential equation for $P(n,t) = P_n$:
+\begin{equation}
+\partial_t P_n = (n+1)P_{n+1} + (1+s)(n-1)P_{n-1} - (2+s) nP_n.
+\end{equation}
+(We subtracted out a factor of $P(n,t)$ and took the limit as $dt \to 0$.)
+
+We would like to remove the dependence on $n$.
+We do so by introducing the \emph{generating function} $G(z,t) = \sum_n P_n z^n$.
+Multiplying through by $z^n$ and summing yields
+\begin{equation}
+\partial_t  \sum_n P_n z^n =  \sum_n (n+1)P_{n+1} z^n + (1+s) \sum_n (n-1)P_{n-1}z^n - (2+s)\sum_n nP_n z^n.
+\end{equation}
+Now we need to think carefully about each term in order to formulate it as a differential equation in $G$.
+The LHS becomes $\partial_t G$.
+The first RHS term becomes $\sum_n (n+1)P_{n+1} z^n = \sum_n n P_{n} z^{n-1}$ (by relabeling elements), which is just $\partial_z G$.
+The second term becomes $(1+s) \sum_n (n-1)P_{n-1}z^n = (1+s) \sum_n n P_n z^{n+1}$ (again by relabeling elements), which becomes $(1+s)z^2 \sum_n n P_n z^{n-1} = (1+s) z^2 \partial_z G$.
+The last term, by similar reasoning, becomes $-(2+s) z \partial_z G$.
+
+We thus have the PDE
+\begin{equation}
+\partial_t G = ((1+s)z^2 - (2+s)z + 1)\partial_z G.
+\end{equation}
+Letting $z = z(t)$, this equation has the form
+\begin{equation}
+\frac{dG}{dt} = \partial_z G \frac{dz}{dt} + \partial_t G = 0,
+\end{equation}
+provided that $\frac{dz}{dt} = -((1+s)z^2 - (2+s)z + 1)$.
+We will proceed using the ``method of characteristics", solving the above ODE for $\frac{dz}{dt}$ that allows $G$ to be constant along this curve.
+(This is where the frequency-dependent version is going to break down, but there may be another solution.)
+In other words, we will try to solve the system of equations:
+\begin{align}
+\frac{dz}{dt} &= -((1+s)z^2 - (2+s)z + 1), \nonumber \\
+\frac{dt}{dt} &= 1, \nonumber \\
+\frac{dG}{dt} &= 0 \nonumber \\
+\end{align}
+given the initial conditions
+\begin{align}
+z(0) &= z_0, \nonumber \\
+t(0) &= 0, \nonumber \\
+G(0) = G(z,0) &= z. \nonumber \\
+\end{align}
+The condition on $G(z,0)$ corresponds to specifying that there be one mutant individual at time $0$: for then $G(z,t) = \sum_n P_n(t) z(t)^n = \sum_n P_n(0) z^n = 1 \times z$.
+We also have the condition $G(1,t) = \sum_n P_n(t) = 1$, since $P_n$ is a probability mass.
+
+The ODE for $z$ is readily solved:
+\begin{equation}
+-\int_{z_0}^z \frac{dz^\prime}{((1+s)z^{\prime 2} - (2+s)z^\prime + 1} = \int_0^t dt^\prime = t = -\frac{1}{s}\log\frac{(z-1)((1+s)z_0 - 1)}{((1+s)z-1)(z_0-1)},
+\end{equation}
+which gives
+\begin{equation}
+z_0 = \frac{(z-1)-((1+s) z - 1) e^{-st} }{(1+s)(z-1) - ((1+s) z - 1) e^{-st}}.
+\end{equation}
+We could solve for $z$ instead if we wanted, but $z_0$ is what we really need.
+The ODE for $G$ yields $G(t) = \mathrm{constant}$, so the time dependence of $G$ can come in only through $z(t)$.
+Effectively, this means $G(z(t),t) = \lambda z(t)$ for some $\lambda$, and the Cauchy data tell us that $\lambda = 1$.
+Combining these yields our generating function
+\begin{equation}
+G(z,t) = \frac{(z-1)-((1+s))z -1) e^{-st} }{(1+s)(z-1) - ((1+s) z - 1) e^{-st}}.
+\end{equation}
+Note that multiplying through by $e^{st}$ yields Desai and Fisher's equation 9.
+If we had left $\beta$ and $\delta$ explicit, we would have
+\begin{equation}
+G(z,t) = \frac{\delta (z-1)-(\beta z - \delta) e^{(\delta - \beta) t} }{\beta(z-1) - (\beta z - \delta) e^{(\delta - \beta) t}}.
+\end{equation}
+From here, properties like fixation probability and establishment time can be obtained.
+
+A slightly more rigorous way to find the generating function follows.
+The general form of this first order semi-linear PDE would be
+\begin{equation}
+a(z,t)G_z + b(z,t)G_t + c(z,t)G = f(z,t,G).
+\end{equation}
+The equation for the integral surface is given by
+\begin{equation}
+F(z,t,G) \coloneqq G(z,t) - G = 0,
+\end{equation}
+and the normal to this integral surface is given by
+\begin{equation}
+\vec{n} = \vec{\nabla} F = G_z \vec{i} + G_t \vec{j} - \vec{k}.
+\end{equation}
+So the PDE is simply $(a(z,t),b(z,t),f(z,t,G)) \cdot \vec{n} = 0$, which is another way of saying that the PDE's vector field $\vec{v} = a(z,t)\vec{i} + b(z,t)\vec{j} + f(z,t,G)\vec{k}$ is normal to the integral surface at every point.
+This means $\vec{v}$ can be written as a curve along the integral surface $F$.
+We can parametrize it using $\tau$ and write
+\begin{equation}
+\vec{p}(\tau ) = z(\tau) \vec{i} + t(\tau) \vec{j} + G(\tau ) \vec{k},
+\end{equation}
+or
+\begin{equation}
+\vec{p}^\prime = \frac{d\vec{p}}{d\tau} = \frac{dz}{d\tau} \vec{i} + \frac{dt}{d\tau} \vec{j} + \frac{dG}{d\tau} \vec{k},
+\end{equation}
+which is normal to $\vec{n}$ and hence proportional to $\vec{v}$.
+If the proportionality constant is $\lambda$, we have $\frac{dz}{d\tau} = \lambda a(z,t)$, $\frac{dt}{d\tau} = \lambda b(z,t)$, and $\frac{dG}{d\tau} = \lambda f(z,t,G)$, which gives us simply
+\begin{equation}
+\frac{dz}{a} = \frac{dt}{b} = \frac{dG}{f}.
+\end{equation}
+In our case, $a = ((1+s)z^2 - (2+s)z +1)$, $b = -1$, and $f = 0$.
+To avoid a divide by zero error, we can simply flip the above equation.
+We end up with
+\begin{equation}
+\frac{dz}{dt} = -((1+s)z^2 - (2+s)z +1) = P(s,z), \frac{dG}{dt} = 0,
+\end{equation}
+with the so called ``Cauchy data" (initial/boundary conditions) given above.
+It remains to solve these ODEs.
+The first one is readily solved:
+\begin{equation}
+\int \frac{dz}{P(s,z)} = \int dt
+\end{equation}
+yields
+\begin{equation}
+t + C_1 = -\frac{1}{s}\log \frac{z-1}{(1+s)z-1},
+\end{equation}
+with $C_1$ a constant.
+The second yields $G = C_2$, which can be taken to mean $G$ has no $t$ dependence except through $z$.
+We now plug in our Cauchy data $G(1,t) = 1$, $G(z,0) = z$ to obtain the form of $G$.
+The constants $C_2$ and $C_1$ are related by some function $\phi$:
+\begin{equation}
+C_2 = \phi(C_1).
+\end{equation}
+Effectively, solving for $z_0$ up above was tantamount to selecting an appropriate value of $C_1$ that makes this relation easy to find.
+
+As a side note, the situation changes slightly if $s = 0$.
+We have $\frac{dz}{dt} = -(z^2-2z+1) = -(z-1)^2$.
+Using the same trick to find $z_0$ yields
+\begin{align}
+-\int_{z_0}^z \frac{dz}{(z-1)^2} &= \int_0^t dt, \nonumber \\
+\therefore \frac{1}{z-1} |^{z}{z_0} &= t \nonumber \\
+\therefore z_0 &= \frac{1-(t-1)(z-1)}{1-t(z-1)}.
+\end{align}
+(Had we left the dependence on the birth and death rates $\beta$ and $\delta$ explicit, we would replace $t$ with $\beta t$.)
+The same argument as above confirms that $z_0$ is the form of our generating function.
+
+It is instructive to consider briefly whether we could have solved this more easily, e.g., by separating variables.
+The answer appears to be ``no".
+Let $G(z,t) = Z(z)T(t)$.
+Then the above PDE for $G$ becomes
+\begin{equation}
+\frac{T^\prime}{T} = P(s,z)\frac{Z^\prime}{Z} = \lambda
+\end{equation}
+with $\lambda$ some constant.
+Then the time dependent portion becomes
+\begin{align}
+\frac{dT}{T} &= \lambda dt \nonumber \\
+\therefore \int^T_{T_0} \frac{dT}{T} &= \int^t_0 \lambda dt \nonumber \\
+\therefore \log \frac{T}{T_0} &= \lambda t,
+\end{align}
+and the $z$ dependent portion becomes
+\begin{align}
+\frac{dZ}{Z} &= \frac{\lambda dz}{P(s,z)} \nonumber \\
+\therefore \int^Z_{Z_0} \frac{dZ}{Z} &= \lambda \int_0^z \frac{dz}{P(s,z)} \nonumber \\
+\therefore \log \frac{Z}{Z_0} &= -\frac{\lambda}{s} \log \frac{z-1}{(1+s)z-1}.
+\end{align}
+(If $s = 0$, it is instead $\lambda(\frac{1}{z-1} - 1)$.)
+Here is the problem.
+The Cauchy data imply $G(z,0) = Z(z)T(0) = z$ and $G(1,t) = Z(1)T(t) = 1$.
+The first condition suggests that $T(0) = 1$ and $Z(z) = z$ which, taken with the second condition, implies $T(t) = \mathrm{constant}$.
+But the condition for $z$ implies a nonzero $\lambda$ (indeed it is impossible for that form of $Z$ to end up linear in $z$ anyway), whereas $T(t) = \mathrm{constant}$ implies $\lambda = 0$ (and $T_0 = 1$).
+So the Cauchy data contradict the assumption of separable parts.
+
+\subsection{Density dependent variation}
+
+Let us see what changes when we introduce density dependence.
+This is, regrettably, something Desai and Fisher tried to avoid, for what appear to be good reasons.
+The simplest possible model is arguably $\beta = 1+ns$.
+The more cooperators there are, the more effectively they gather resources and therefore the more quickly they can reproduce.
+The equation for $P_n$ becomes
+\begin{equation}
+\partial_t P_n = (n+1)P_{n+1} + (1+ns)(n-1)P_{n-1} - (2+ns) nP_n.
+\end{equation}
+Now, again, we need to think carefully as we introduce the generating function:
+\begin{equation}
+\partial_t \sum_n P_n z^n = \sum_n (n+1)P_{n+1}z^n + \sum_n (1+ns)(n-1)P_{n-1}z^n - \sum_n (2+ns) nP_n z^n.
+\end{equation}
+Getting rid of the $n^2$ terms within the sums will require that we have some $\partial_z^2$ terms floating around.
+Let's see where.
+
+As before, the LHS becomes $\partial_t G$.
+The first RHS term becomes $\partial_z G$.
+The second RHS term is more interesting. We have
+\begin{align}
+\sum_n (1+ns)(n-1)P_{n-1}z^n &= \sum_n (n(n-1)s + (n-1))P_{n-1}z^n \nonumber \\
+&= s\sum_n n(n-1)P_{n-1}z^n + \sum_n (n-1)P_{n-1}z^n \nonumber \\
+&= s\sum_n (n+1)nP_n z^{n+1} + \sum_n n P_n z^{n+1} \nonumber \\
+&= sz^2\sum_n (n+1)nP_n z^{n-1} + z^2 \sum_n n P_n z^{n-1} \nonumber \\
+&= sz^2\partial_z^2 (zG) + z^2 \partial_z G \nonumber \\
+&= sz^2 \partial_z (G + z\partial_z G) + z^2 \partial_z G \nonumber \\
+&= sz^2 (z\partial_z^2 G + 2\partial_z G) + z^2\partial_z G \nonumber \\
+&= sz^3 \partial_z^2 G + (2sz^2 + z^2)\partial_z G.
+\end{align}
+Lastly, that third RHS term becomes
+\begin{align}
+\sum_n (2+ns) nP_n z^n &= 2\sum_n nP_n z^n + s\sum_n n^2 P_n z^n \nonumber \\
+&= 2z \sum_n nP_n z^{n-1} + s\sum_n n(n-1) P_n z^n + s\sum_n nP_n z^n \nonumber \\
+&= 2z \partial_z G + sz^2\sum_n n(n-1) P_n z^{n-2} + sz\sum_n nP_n z^{n-1} \nonumber \\
+&= sz^2 \partial_z^2 G + (2z+sz)\partial_z G.
+\end{align}
+Putting it all together, we get
+\begin{equation}
+\partial_t G = sz^2(z-1) \partial_z^2 G + (z^2(2s+1) - z(2+s) + 1)\partial_z G.
+\end{equation}
+This inspires some hope since the terms are nice, but there does not appear to be an analytical solution.
+Some remarks are due.
+First, observe that the second order terms are parabolic.
+The canonical parabolic second order PDE is the heat equation, but there is no obvious way to change variables such that the heat equation arises.
+More generally this is an instance of the \emph{Fokker-Planck equation}, for which at least some interesting numerical methods are available.
+
+Alternately, note that the $z$ dependent right hand side terms can be written as a Sturm-Liouville operator on $G$, and Sturm-Liouville problems are sometimes solvable by separation of variables: the $z$ component would likely have to be approximated by Frobenius' method (a power series in $z$: an interesting fly in the ointment is that the coefficients would simply be $P(n,0)$, which we already know), resulting in an ugly system of recursive equations, and we would have to pray that the recursion gave us a recognizable form.
+However, if we let $s = 0$, the second order term disappears, and we recover the same PDE as in the density independent case, which we know was \emph{not} solvable by separation of variables.
+So it seems there is probably no (known) way to solve this analytically.
+
+\subsection{Perturbative approach}
+
+Suppose we combined the density-dependent and -independent forms of our master equation and introduce a parameter $\alpha$, corresponding to ``how" density dependent selection is.
+Then 
+\begin{equation}
+\partial_t P_n = (n+1)P_{n+1} + (1+s(1-\alpha) + ns\alpha )(n-1)P_{n-1} - (2+s(1-\alpha)+ns\alpha) nP_n.
+\end{equation}
+If we restrict our analysis to the case where $\alpha$ is small, we might be able to proceed perturbatively based on the (known) solution for $G(z,t)$ in the density independent case.
+The PDE for the generating function becomes
+\begin{equation}
+\partial_t G = ((1+s)z^2 - (2+s)z + 1)\partial_z G.
+\end{equation}
+\begin{equation}
+\partial_t G = sz^2(z-1) \partial_z^2 G + (z^2(2s+1) - z(2+s) + 1)\partial_z G.
+\end{equation}
+
+This is a parabolic PDE (zero discriminant), but it unfortunately seems to be in about as simplified a form as one can reasonably expect.
+\end{document}
